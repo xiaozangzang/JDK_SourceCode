@@ -1,7 +1,6 @@
 package java.util;
 
-public abstract
-class Dictionary<K,V> {
+public abstract class Dictionary<K,V> {
     
     public Dictionary() {
     }

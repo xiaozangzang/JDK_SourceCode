@@ -1,8 +1,6 @@
 package java.lang;
 
-public final class StringBuilder
-    extends AbstractStringBuilder
-    implements java.io.Serializable, CharSequence
+public final class StringBuilder extends AbstractStringBuilder implements java.io.Serializable, CharSequence
 {
     static final long serialVersionUID = 4383685877147921099L;
 

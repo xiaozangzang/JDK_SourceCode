@@ -2,9 +2,7 @@ package java.lang;
 /**
 StringBuffer
 */
- public final class StringBuffer
-    extends AbstractStringBuilder
-    implements java.io.Serializable, CharSequence
+ public final class StringBuffer extends AbstractStringBuilder implements java.io.Serializable, CharSequence
 {
 
     static final long serialVersionUID = 3388685877147921107L;

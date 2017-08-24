@@ -21,7 +21,7 @@ public class HashMap<K,V>
     final float loadFactor;
 
     transient volatile int modCount;
-
+	//构造器
     public HashMap(int initialCapacity, float loadFactor) {
         if (initialCapacity < 0)
             throw new IllegalArgumentException("Illegal initial capacity: " +
@@ -62,7 +62,8 @@ public class HashMap<K,V>
 
     void init() {
     }
-
+	
+	//返回哈希值
     static int hash(int h) {
         // This function ensures that hashCodes that differ only by
         // constant multiples at each bit position have a bounded
@@ -74,7 +75,7 @@ public class HashMap<K,V>
     static int indexFor(int h, int length) {
         return h & (length-1);
     }
-
+	//返回map的长度
     public int size() {
         return size;
     }
@@ -179,7 +180,7 @@ public class HashMap<K,V>
             putForCreate(e.getKey(), e.getValue());
         }
     }
-
+	//扩容2倍
     void resize(int newCapacity) {
         Entry[] oldTable = table;
         int oldCapacity = oldTable.length;
