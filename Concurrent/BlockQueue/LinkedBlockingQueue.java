@@ -15,36 +15,21 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
     static class Node<E> {
         E item;
 
-        /**
-         * One of:
-         * - the real successor Node
-         * - this Node, meaning the successor is head.next
-         * - null, meaning there is no successor (this is the last node)
-         */
         Node<E> next;
 
         Node(E x) { item = x; }
     }
 
-    /** The capacity bound, or Integer.MAX_VALUE if none */
     private final int capacity;
 
     /** Current number of elements */
     private final AtomicInteger count = new AtomicInteger(0);
 
-    /**
-     * Head of linked list.
-     * Invariant: head.item == null
-     */
+   
     private transient Node<E> head;
 
-    /**
-     * Tail of linked list.
-     * Invariant: last.next == null
-     */
     private transient Node<E> last;
 
-    /** Lock held by take, poll, etc */
     private final ReentrantLock takeLock = new ReentrantLock();
 
     /** Wait queue for waiting takes */

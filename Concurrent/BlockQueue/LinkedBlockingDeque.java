@@ -12,27 +12,13 @@ public class LinkedBlockingDeque<E>
     implements BlockingDeque<E>,  java.io.Serializable {
     private static final long serialVersionUID = -387911632671998426L;
 
-    /** Doubly-linked list node class */
     static final class Node<E> {
-        /**
-         * The item, or null if this node has been removed.
-         */
+       
         E item;
 
-        /**
-         * One of:
-         * - the real predecessor Node
-         * - this Node, meaning the predecessor is tail
-         * - null, meaning there is no predecessor
-         */
         Node<E> prev;
 
-        /**
-         * One of:
-         * - the real successor Node
-         * - this Node, meaning the successor is head
-         * - null, meaning there is no successor
-         */
+        
         Node<E> next;
 
         Node(E x) {
@@ -77,27 +63,12 @@ public class LinkedBlockingDeque<E>
         this(Integer.MAX_VALUE);
     }
 
-    /**
-     * Creates a {@code LinkedBlockingDeque} with the given (fixed) capacity.
-     *
-     * @param capacity the capacity of this deque
-     * @throws IllegalArgumentException if {@code capacity} is less than 1
-     */
+   
     public LinkedBlockingDeque(int capacity) {
         if (capacity <= 0) throw new IllegalArgumentException();
         this.capacity = capacity;
     }
 
-    /**
-     * Creates a {@code LinkedBlockingDeque} with a capacity of
-     * {@link Integer#MAX_VALUE}, initially containing the elements of
-     * the given collection, added in traversal order of the
-     * collection's iterator.
-     *
-     * @param c the collection of elements to initially contain
-     * @throws NullPointerException if the specified collection or any
-     *         of its elements are null
-     */
     public LinkedBlockingDeque(Collection<? extends E> c) {
         this(Integer.MAX_VALUE);
         final ReentrantLock lock = this.lock;
