@@ -1,49 +1,7 @@
-/*
- * Copyright (c) 2009, 2011, Oracle and/or its affiliates. All rights reserved.
- * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- */
-
 package java.util;
 
-/**
- * This class implements the Dual-Pivot Quicksort algorithm by
- * Vladimir Yaroslavskiy, Jon Bentley, and Josh Bloch. The algorithm
- * offers O(n log(n)) performance on many data sets that cause other
- * quicksorts to degrade to quadratic performance, and is typically
- * faster than traditional (one-pivot) Quicksort implementations.
- *
- * @author Vladimir Yaroslavskiy
- * @author Jon Bentley
- * @author Josh Bloch
- *
- * @version 2011.02.11 m765.827.12i:5\7pm
- * @since 1.7
- */
 final class DualPivotQuicksort {
 
-    /**
-     * Prevents instantiation.
-     */
     private DualPivotQuicksort() {}
 
     /*
@@ -229,14 +187,7 @@ final class DualPivotQuicksort {
                     }
                 } while (a[++left] >= a[left - 1]);
 
-                /*
-                 * Every element from adjoining part plays the role
-                 * of sentinel, therefore this allows us to avoid the
-                 * left range check on each iteration. Moreover, we use
-                 * the more optimized algorithm, so called pair insertion
-                 * sort, which is faster (in the context of Quicksort)
-                 * than traditional implementation of insertion sort.
-                 */
+          
                 for (int k = left; ++left <= right; k = ++left) {
                     int a1 = a[k], a2 = a[left];
 
@@ -266,13 +217,7 @@ final class DualPivotQuicksort {
         // Inexpensive approximation of length / 7
         int seventh = (length >> 3) + (length >> 6) + 1;
 
-        /*
-         * Sort five evenly spaced elements around (and including) the
-         * center element in the range. These elements will be used for
-         * pivot selection as described below. The choice for spacing
-         * these elements was empirically determined to work well on
-         * a wide variety of inputs.
-         */
+        
         int e3 = (left + right) >>> 1; // The midpoint
         int e2 = e3 - seventh;
         int e1 = e2 - seventh;
@@ -303,20 +248,10 @@ final class DualPivotQuicksort {
         int great = right; // The index before the first element of right part
 
         if (a[e1] != a[e2] && a[e2] != a[e3] && a[e3] != a[e4] && a[e4] != a[e5]) {
-            /*
-             * Use the second and fourth of the five sorted elements as pivots.
-             * These values are inexpensive approximations of the first and
-             * second terciles of the array. Note that pivot1 <= pivot2.
-             */
+           
             int pivot1 = a[e2];
             int pivot2 = a[e4];
 
-            /*
-             * The first and the last elements to be sorted are moved to the
-             * locations formerly occupied by the pivots. When partitioning
-             * is complete, the pivots are swapped back into their final
-             * positions, and excluded from subsequent sorting.
-             */
             a[e2] = a[left];
             a[e4] = a[right];
 
@@ -326,25 +261,6 @@ final class DualPivotQuicksort {
             while (a[++less] < pivot1);
             while (a[--great] > pivot2);
 
-            /*
-             * Partitioning:
-             *
-             *   left part           center part                   right part
-             * +--------------------------------------------------------------+
-             * |  < pivot1  |  pivot1 <= && <= pivot2  |    ?    |  > pivot2  |
-             * +--------------------------------------------------------------+
-             *               ^                          ^       ^
-             *               |                          |       |
-             *              less                        k     great
-             *
-             * Invariants:
-             *
-             *              all in (left, less)   < pivot1
-             *    pivot1 <= all in [less, k)     <= pivot2
-             *              all in (great, right) > pivot2
-             *
-             * Pointer k is the first index of ?-part.
-             */
             outer:
             for (int k = less - 1; ++k <= great; ) {
                 int ak = a[k];
