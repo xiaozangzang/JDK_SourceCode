@@ -13,62 +13,20 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V>
 
     static final int DEFAULT_INITIAL_CAPACITY = 16;
 
-    /**
-     * The default load factor for this table, used when not
-     * otherwise specified in a constructor.
-     */
     static final float DEFAULT_LOAD_FACTOR = 0.75f;
-
-    /**
-     * The default concurrency level for this table, used when not
-     * otherwise specified in a constructor.
-     */
+    
     static final int DEFAULT_CONCURRENCY_LEVEL = 16;
 
-    /**
-     * The maximum capacity, used if a higher value is implicitly
-     * specified by either of the constructors with arguments.  MUST
-     * be a power of two <= 1<<30 to ensure that entries are indexable
-     * using ints.
-     */
-    static final int MAXIMUM_CAPACITY = 1 << 30;
+	static final int MAXIMUM_CAPACITY = 1 << 30;
 
-    /**
-     * The minimum capacity for per-segment tables.  Must be a power
-     * of two, at least two to avoid immediate resizing on next use
-     * after lazy construction.
-     */
     static final int MIN_SEGMENT_TABLE_CAPACITY = 2;
 
-    /**
-     * The maximum number of segments to allow; used to bound
-     * constructor arguments. Must be power of two less than 1 << 24.
-     */
     static final int MAX_SEGMENTS = 1 << 16; // slightly conservative
 
-    /**
-     * Number of unsynchronized retries in size and containsValue
-     * methods before resorting to locking. This is used to avoid
-     * unbounded retries if tables undergo continuous modification
-     * which would make it impossible to obtain an accurate result.
-     */
     static final int RETRIES_BEFORE_LOCK = 2;
 
-    /* ---------------- Fields -------------- */
-
-    /**
-     * holds values which can't be initialized until after VM is booted.
-     */
     private static class Holder {
 
-        /**
-        * Enable alternative hashing of String keys?
-        *
-        * <p>Unlike the other hash map implementations we do not implement a
-        * threshold for regulating whether alternative hashing is used for
-        * String keys. Alternative hashing is either enabled for all instances
-        * or disabled for all instances.
-        */
         static final boolean ALTERNATIVE_HASHING;
 
         static {
@@ -220,84 +178,22 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V>
         return h ^ (h >>> 16);
     }
 
-    /**
-     * Segments are specialized versions of hash tables.  This
-     * subclasses from ReentrantLock opportunistically, just to
-     * simplify some locking and avoid separate construction.
-     */
+   
     static final class Segment<K,V> extends ReentrantLock implements Serializable {
-        /*
-         * Segments maintain a table of entry lists that are always
-         * kept in a consistent state, so can be read (via volatile
-         * reads of segments and tables) without locking.  This
-         * requires replicating nodes when necessary during table
-         * resizing, so the old lists can be traversed by readers
-         * still using old version of table.
-         *
-         * This class defines only mutative methods requiring locking.
-         * Except as noted, the methods of this class perform the
-         * per-segment versions of ConcurrentHashMap methods.  (Other
-         * methods are integrated directly into ConcurrentHashMap
-         * methods.) These mutative methods use a form of controlled
-         * spinning on contention via methods scanAndLock and
-         * scanAndLockForPut. These intersperse tryLocks with
-         * traversals to locate nodes.  The main benefit is to absorb
-         * cache misses (which are very common for hash tables) while
-         * obtaining locks so that traversal is faster once
-         * acquired. We do not actually use the found nodes since they
-         * must be re-acquired under lock anyway to ensure sequential
-         * consistency of updates (and in any case may be undetectably
-         * stale), but they will normally be much faster to re-locate.
-         * Also, scanAndLockForPut speculatively creates a fresh node
-         * to use in put if no node is found.
-         */
-
+        
         private static final long serialVersionUID = 2249069246763182397L;
 
-        /**
-         * The maximum number of times to tryLock in a prescan before
-         * possibly blocking on acquire in preparation for a locked
-         * segment operation. On multiprocessors, using a bounded
-         * number of retries maintains cache acquired while locating
-         * nodes.
-         */
         static final int MAX_SCAN_RETRIES =
             Runtime.getRuntime().availableProcessors() > 1 ? 64 : 1;
 
-        /**
-         * The per-segment table. Elements are accessed via
-         * entryAt/setEntryAt providing volatile semantics.
-         */
         transient volatile HashEntry<K,V>[] table;
 
-        /**
-         * The number of elements. Accessed only either within locks
-         * or among other volatile reads that maintain visibility.
-         */
         transient int count;
 
-        /**
-         * The total number of mutative operations in this segment.
-         * Even though this may overflows 32 bits, it provides
-         * sufficient accuracy for stability checks in CHM isEmpty()
-         * and size() methods.  Accessed only either within locks or
-         * among other volatile reads that maintain visibility.
-         */
         transient int modCount;
 
-        /**
-         * The table is rehashed when its size exceeds this threshold.
-         * (The value of this field is always <tt>(int)(capacity *
-         * loadFactor)</tt>.)
-         */
         transient int threshold;
 
-        /**
-         * The load factor for the hash table.  Even though this value
-         * is same for all segments, it is replicated to avoid needing
-         * links to outer object.
-         * @serial
-         */
         final float loadFactor;
 
         Segment(float lf, int threshold, HashEntry<K,V>[] tab) {
@@ -350,28 +246,10 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V>
             return oldValue;
         }
 
-        /**
-         * Doubles size of table and repacks entries, also adding the
-         * given node to new table
-         */
+       
         @SuppressWarnings("unchecked")
         private void rehash(HashEntry<K,V> node) {
-            /*
-             * Reclassify nodes in each list to new table.  Because we
-             * are using power-of-two expansion, the elements from
-             * each bin must either stay at same index, or move with a
-             * power of two offset. We eliminate unnecessary node
-             * creation by catching cases where old nodes can be
-             * reused because their next fields won't change.
-             * Statistically, at the default threshold, only about
-             * one-sixth of them need cloning when a table
-             * doubles. The nodes they replace will be garbage
-             * collectable as soon as they are no longer referenced by
-             * any reader thread that may be in the midst of
-             * concurrently traversing table. Entry accesses use plain
-             * array indexing because they are followed by volatile
-             * table write.
-             */
+           
             HashEntry<K,V>[] oldTable = table;
             int oldCapacity = oldTable.length;
             int newCapacity = oldCapacity << 1;
@@ -416,16 +294,6 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V>
             table = newTable;
         }
 
-        /**
-         * Scans for a node containing given key while trying to
-         * acquire lock, creating and returning one if not found. Upon
-         * return, guarantees that lock is held. UNlike in most
-         * methods, calls to method equals are not screened: Since
-         * traversal speed doesn't matter, we might as well help warm
-         * up the associated code and accesses as well.
-         *
-         * @return a new node if key not found, else null
-         */
         private HashEntry<K,V> scanAndLockForPut(K key, int hash, V value) {
             HashEntry<K,V> first = entryForHash(this, hash);
             HashEntry<K,V> e = first;
@@ -457,13 +325,6 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V>
             return node;
         }
 
-        /**
-         * Scans for a node containing the given key while trying to
-         * acquire lock for a remove or replace operation. Upon
-         * return, guarantees that lock is held.  Note that we must
-         * lock even if the key is not found, to ensure sequential
-         * consistency of updates.
-         */
         private void scanAndLock(Object key, int hash) {
             // similar to but simpler than scanAndLockForPut
             HashEntry<K,V> first = entryForHash(this, hash);
@@ -489,9 +350,6 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V>
             }
         }
 
-        /**
-         * Remove; match on key only if value null, else match both.
-         */
         final V remove(Object key, int hash, Object value) {
             if (!tryLock())
                 scanAndLock(key, hash);
@@ -587,16 +445,6 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V>
         }
     }
 
-    // Accessing segments
-
-    /**
-     * Gets the jth element of given segment array (if nonnull) with
-     * volatile element access semantics via Unsafe. (The null check
-     * can trigger harmlessly only during deserialization.) Note:
-     * because each element of segments array is set only once (using
-     * fully ordered writes), some performance-sensitive methods rely
-     * on this method only as a recheck upon null reads.
-     */
     @SuppressWarnings("unchecked")
     static final <K,V> Segment<K,V> segmentAt(Segment<K,V>[] ss, int j) {
         long u = (j << SSHIFT) + SBASE;
@@ -604,13 +452,6 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V>
             (Segment<K,V>) UNSAFE.getObjectVolatile(ss, u);
     }
 
-    /**
-     * Returns the segment for the given index, creating it and
-     * recording in segment table (via CAS) if not already present.
-     *
-     * @param k the index
-     * @return the segment
-     */
     @SuppressWarnings("unchecked")
     private Segment<K,V> ensureSegment(int k) {
         final Segment<K,V>[] ss = this.segments;
@@ -635,20 +476,12 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V>
         return seg;
     }
 
-    // Hash-based segment and entry accesses
-
-    /**
-     * Get the segment for the given hash
-     */
     @SuppressWarnings("unchecked")
     private Segment<K,V> segmentForHash(int h) {
         long u = (((h >>> segmentShift) & segmentMask) << SSHIFT) + SBASE;
         return (Segment<K,V>) UNSAFE.getObjectVolatile(segments, u);
     }
 
-    /**
-     * Gets the table entry for the given segment and hash
-     */
     @SuppressWarnings("unchecked")
     static final <K,V> HashEntry<K,V> entryForHash(Segment<K,V> seg, int h) {
         HashEntry<K,V>[] tab;
@@ -657,24 +490,6 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V>
             (tab, ((long)(((tab.length - 1) & h)) << TSHIFT) + TBASE);
     }
 
-    /* ---------------- Public operations -------------- */
-
-    /**
-     * Creates a new, empty map with the specified initial
-     * capacity, load factor and concurrency level.
-     *
-     * @param initialCapacity the initial capacity. The implementation
-     * performs internal sizing to accommodate this many elements.
-     * @param loadFactor  the load factor threshold, used to control resizing.
-     * Resizing may be performed when the average number of elements per
-     * bin exceeds this threshold.
-     * @param concurrencyLevel the estimated number of concurrently
-     * updating threads. The implementation performs internal sizing
-     * to try to accommodate this many threads.
-     * @throws IllegalArgumentException if the initial capacity is
-     * negative or the load factor or concurrencyLevel are
-     * nonpositive.
-     */
     @SuppressWarnings("unchecked")
     public ConcurrentHashMap(int initialCapacity,
                              float loadFactor, int concurrencyLevel) {
@@ -708,20 +523,6 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V>
         this.segments = ss;
     }
 
-    /**
-     * Creates a new, empty map with the specified initial capacity
-     * and load factor and with the default concurrencyLevel (16).
-     *
-     * @param initialCapacity The implementation performs internal
-     * sizing to accommodate this many elements.
-     * @param loadFactor  the load factor threshold, used to control resizing.
-     * Resizing may be performed when the average number of elements per
-     * bin exceeds this threshold.
-     * @throws IllegalArgumentException if the initial capacity of
-     * elements is negative or the load factor is nonpositive
-     *
-     * @since 1.6
-     */
     public ConcurrentHashMap(int initialCapacity, float loadFactor) {
         this(initialCapacity, loadFactor, DEFAULT_CONCURRENCY_LEVEL);
     }
@@ -762,21 +563,8 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V>
         putAll(m);
     }
 
-    /**
-     * Returns <tt>true</tt> if this map contains no key-value mappings.
-     *
-     * @return <tt>true</tt> if this map contains no key-value mappings
-     */
     public boolean isEmpty() {
-        /*
-         * Sum per-segment modCounts to avoid mis-reporting when
-         * elements are concurrently added and removed in one segment
-         * while checking another, in which case the table was never
-         * actually empty at any point. (The sum ensures accuracy up
-         * through at least 1<<31 per-segment modifications before
-         * recheck.)  Methods size() and containsValue() use similar
-         * constructions for stability checks.
-         */
+        
         long sum = 0L;
         final Segment<K,V>[] segments = this.segments;
         for (int j = 0; j < segments.length; ++j) {
@@ -878,15 +666,6 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V>
         return null;
     }
 
-    /**
-     * Tests if the specified object is a key in this table.
-     *
-     * @param  key   possible key
-     * @return <tt>true</tt> if and only if the specified object
-     *         is a key in this table, as determined by the
-     *         <tt>equals</tt> method; <tt>false</tt> otherwise.
-     * @throws NullPointerException if the specified key is null
-     */
     @SuppressWarnings("unchecked")
     public boolean containsKey(Object key) {
         Segment<K,V> s; // same as get() except no need for volatile value read
@@ -906,17 +685,6 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V>
         return false;
     }
 
-    /**
-     * Returns <tt>true</tt> if this map maps one or more keys to the
-     * specified value. Note: This method requires a full internal
-     * traversal of the hash table, and so is much slower than
-     * method <tt>containsKey</tt>.
-     *
-     * @param value value whose presence in this map is to be tested
-     * @return <tt>true</tt> if this map maps one or more keys to the
-     *         specified value
-     * @throws NullPointerException if the specified value is null
-     */
     public boolean containsValue(Object value) {
         // Same idea as size()
         if (value == null)
@@ -963,38 +731,10 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V>
         return found;
     }
 
-    /**
-     * Legacy method testing if some key maps into the specified value
-     * in this table.  This method is identical in functionality to
-     * {@link #containsValue}, and exists solely to ensure
-     * full compatibility with class {@link java.util.Hashtable},
-     * which supported this method prior to introduction of the
-     * Java Collections framework.
-
-     * @param  value a value to search for
-     * @return <tt>true</tt> if and only if some key maps to the
-     *         <tt>value</tt> argument in this table as
-     *         determined by the <tt>equals</tt> method;
-     *         <tt>false</tt> otherwise
-     * @throws NullPointerException if the specified value is null
-     */
     public boolean contains(Object value) {
         return containsValue(value);
     }
 
-    /**
-     * Maps the specified key to the specified value in this table.
-     * Neither the key nor the value can be null.
-     *
-     * <p> The value can be retrieved by calling the <tt>get</tt> method
-     * with a key that is equal to the original key.
-     *
-     * @param key key with which the specified value is to be associated
-     * @param value value to be associated with the specified key
-     * @return the previous value associated with <tt>key</tt>, or
-     *         <tt>null</tt> if there was no mapping for <tt>key</tt>
-     * @throws NullPointerException if the specified key or value is null
-     */
     @SuppressWarnings("unchecked")
     public V put(K key, V value) {
         Segment<K,V> s;
@@ -1274,15 +1014,6 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V>
             super(k,v);
         }
 
-        /**
-         * Set our entry's value and write through to the map. The
-         * value to return is somewhat arbitrary here. Since a
-         * WriteThroughEntry does not necessarily track asynchronous
-         * changes, the most recent "previous" value could be
-         * different from what we return (or could even have been
-         * removed in which case the put will re-establish). We do not
-         * and cannot guarantee more.
-         */
         public V setValue(V value) {
             if (value == null) throw new NullPointerException();
             V v = super.setValue(value);
@@ -1368,17 +1099,6 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V>
         }
     }
 
-    /* ---------------- Serialization Support -------------- */
-
-    /**
-     * Save the state of the <tt>ConcurrentHashMap</tt> instance to a
-     * stream (i.e., serialize it).
-     * @param s the stream
-     * @serialData
-     * the key (Object) and value (Object)
-     * for each key-value mapping, followed by a null pair.
-     * The key-value mappings are emitted in no particular order.
-     */
     private void writeObject(java.io.ObjectOutputStream s) throws IOException {
         // force all segments for serialization compatibility
         for (int k = 0; k < segments.length; ++k)
@@ -1406,11 +1126,7 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V>
         s.writeObject(null);
     }
 
-    /**
-     * Reconstitute the <tt>ConcurrentHashMap</tt> instance from a
-     * stream (i.e., deserialize it).
-     * @param s the stream
-     */
+   
     @SuppressWarnings("unchecked")
     private void readObject(java.io.ObjectInputStream s)
         throws IOException, ClassNotFoundException {
