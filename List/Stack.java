@@ -44,6 +44,5 @@ class Stack<E> extends Vector<E> {
         return -1;
     }
 
-    /** use serialVersionUID from JDK 1.0.2 for interoperability */
     private static final long serialVersionUID = 1224463164541339165L;
 }
