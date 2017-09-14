@@ -4,64 +4,22 @@ final class DualPivotQuicksort {
 
     private DualPivotQuicksort() {}
 
-    /*
-     * Tuning parameters.
-     */
-
-    /**
-     * The maximum number of runs in merge sort.
-     */
     private static final int MAX_RUN_COUNT = 67;
 
-    /**
-     * The maximum length of run in merge sort.
-     */
     private static final int MAX_RUN_LENGTH = 33;
 
-    /**
-     * If the length of an array to be sorted is less than this
-     * constant, Quicksort is used in preference to merge sort.
-     */
     private static final int QUICKSORT_THRESHOLD = 286;
 
-    /**
-     * If the length of an array to be sorted is less than this
-     * constant, insertion sort is used in preference to Quicksort.
-     */
     private static final int INSERTION_SORT_THRESHOLD = 47;
 
-    /**
-     * If the length of a byte array to be sorted is greater than this
-     * constant, counting sort is used in preference to insertion sort.
-     */
     private static final int COUNTING_SORT_THRESHOLD_FOR_BYTE = 29;
 
-    /**
-     * If the length of a short or char array to be sorted is greater
-     * than this constant, counting sort is used in preference to Quicksort.
-     */
     private static final int COUNTING_SORT_THRESHOLD_FOR_SHORT_OR_CHAR = 3200;
 
-    /*
-     * Sorting methods for seven primitive types.
-     */
-
-    /**
-     * Sorts the specified array.
-     *
-     * @param a the array to be sorted
-     */
     public static void sort(int[] a) {
         sort(a, 0, a.length - 1);
     }
 
-    /**
-     * Sorts the specified range of the array.
-     *
-     * @param a the array to be sorted
-     * @param left the index of the first element, inclusive, to be sorted
-     * @param right the index of the last element, inclusive, to be sorted
-     */
     public static void sort(int[] a, int left, int right) {
         // Use Quicksort on small arrays
         if (right - left < QUICKSORT_THRESHOLD) {
@@ -69,10 +27,6 @@ final class DualPivotQuicksort {
             return;
         }
 
-        /*
-         * Index run[i] is the start of i-th run
-         * (ascending or descending sequence).
-         */
         int[] run = new int[MAX_RUN_COUNT + 1];
         int count = 0; run[0] = left;
 
@@ -94,10 +48,6 @@ final class DualPivotQuicksort {
                 }
             }
 
-            /*
-             * The array is not highly structured,
-             * use Quicksort instead of merge sort.
-             */
             if (++count == MAX_RUN_COUNT) {
                 sort(a, left, right, true);
                 return;
@@ -111,10 +61,6 @@ final class DualPivotQuicksort {
             return;
         }
 
-        /*
-         * Create temporary array, which is used for merging.
-         * Implementation note: variable "right" is increased by 1.
-         */
         int[] b; byte odd = 0;
         for (int n = 1; (n <<= 1) < count; odd ^= 1);
 
@@ -148,14 +94,6 @@ final class DualPivotQuicksort {
         }
     }
 
-    /**
-     * Sorts the specified range of the array by Dual-Pivot Quicksort.
-     *
-     * @param a the array to be sorted
-     * @param left the index of the first element, inclusive, to be sorted
-     * @param right the index of the last element, inclusive, to be sorted
-     * @param leftmost indicates if this part is the leftmost in the range
-     */
     private static void sort(int[] a, int left, int right, boolean leftmost) {
         int length = right - left + 1;
 
