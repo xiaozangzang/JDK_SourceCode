@@ -170,10 +170,7 @@ StringBuffer
         return this;
     }
 
-    /**
-     * @see     java.lang.String#valueOf(boolean)
-     * @see     #append(java.lang.String)
-     */
+    
     public synchronized StringBuffer append(boolean b) {
         super.append(b);
         return this;
@@ -184,105 +181,58 @@ StringBuffer
         return this;
     }
 
-    /**
-     * @see     java.lang.String#valueOf(int)
-     * @see     #append(java.lang.String)
-     */
     public synchronized StringBuffer append(int i) {
 	super.append(i);
         return this;
     }
 
-    /**
-     * @since 1.5
-     */
     public synchronized StringBuffer appendCodePoint(int codePoint) {
 	super.appendCodePoint(codePoint);
 	return this;
     }
 
-    /**
-     * @see     java.lang.String#valueOf(long)
-     * @see     #append(java.lang.String)
-     */
     public synchronized StringBuffer append(long lng) {
         super.append(lng);
 	return this;
     }
 
-    /**
-     * @see     java.lang.String#valueOf(float)
-     * @see     #append(java.lang.String)
-     */
     public synchronized StringBuffer append(float f) {
 	super.append(f);
 	return this;
     }
 
-    /**
-     * @see     java.lang.String#valueOf(double)
-     * @see     #append(java.lang.String)
-     */
     public synchronized StringBuffer append(double d) {
 	super.append(d);
 	return this;
     }
 
-    /**
-     * @throws StringIndexOutOfBoundsException {@inheritDoc}
-     * @since      1.2
-     */
     public synchronized StringBuffer delete(int start, int end) {
         super.delete(start, end);
         return this;
     }
 
-    /**
-     * @throws StringIndexOutOfBoundsException {@inheritDoc}
-     * @since      1.2
-     */
     public synchronized StringBuffer deleteCharAt(int index) {
         super.deleteCharAt(index);
         return this;
     }
 
-    /**
-     * @throws StringIndexOutOfBoundsException {@inheritDoc}
-     * @since      1.2
-     */
     public synchronized StringBuffer replace(int start, int end, String str) {
         super.replace(start, end, str);
         return this;
     }
 
-    /**
-     * @throws StringIndexOutOfBoundsException {@inheritDoc}
-     * @since      1.2
-     */
     public synchronized String substring(int start) {
         return substring(start, count);
     }
 
-    /**
-     * @throws IndexOutOfBoundsException {@inheritDoc}
-     * @since      1.4
-     */
     public synchronized CharSequence subSequence(int start, int end) {
         return super.substring(start, end);
     }
 
-    /**
-     * @throws StringIndexOutOfBoundsException {@inheritDoc}
-     * @since      1.2
-     */
     public synchronized String substring(int start, int end) {
         return super.substring(start, end);
     }
 
-    /**
-     * @throws StringIndexOutOfBoundsException {@inheritDoc}
-     * @since      1.2
-     */
     public synchronized StringBuffer insert(int index, char str[], int offset,
                                             int len) 
     {
@@ -316,10 +266,6 @@ StringBuffer
         return this.insert(dstOffset, s, 0, s.length());
     }
 
-    /**
-     * @throws IndexOutOfBoundsException {@inheritDoc}
-     * @since      1.5
-     */
     public synchronized StringBuffer insert(int dstOffset, CharSequence s, 
                                             int start, int end)
     {
@@ -327,51 +273,26 @@ StringBuffer
         return this;
     }
 
-    /**
-     * @throws StringIndexOutOfBoundsException {@inheritDoc}
-     * @see        java.lang.String#valueOf(boolean)
-     * @see        #insert(int, java.lang.String)
-     * @see        #length()
-     */
     public StringBuffer insert(int offset, boolean b) {
 	return insert(offset, String.valueOf(b));
     }
 
-    /**
-     * @throws IndexOutOfBoundsException {@inheritDoc}
-     * @see        #length()
-     */
     public synchronized StringBuffer insert(int offset, char c) {
 	super.insert(offset, c);
 	return this;
     }
 
-    /**
-     * @throws StringIndexOutOfBoundsException {@inheritDoc}
-     * @see        java.lang.String#valueOf(int)
-     * @see        #insert(int, java.lang.String)
-     * @see        #length()
-     */
+    
     public StringBuffer insert(int offset, int i) {
 	return insert(offset, String.valueOf(i));
     }
 
-    /**
-     * @throws StringIndexOutOfBoundsException {@inheritDoc}
-     * @see        java.lang.String#valueOf(long)
-     * @see        #insert(int, java.lang.String)
-     * @see        #length()
-     */
+   
     public StringBuffer insert(int offset, long l) {
 	return insert(offset, String.valueOf(l));
     }
 
-    /**
-     * @throws StringIndexOutOfBoundsException {@inheritDoc}
-     * @see        java.lang.String#valueOf(float)
-     * @see        #insert(int, java.lang.String)
-     * @see        #length()
-     */
+    
     public StringBuffer insert(int offset, float f) {
 	return insert(offset, String.valueOf(f));
     }
