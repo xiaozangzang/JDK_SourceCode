@@ -114,13 +114,6 @@ public class SynchronousQueue<E> extends AbstractQueue<E>
                 UNSAFE.compareAndSwapObject(this, headOffset, h, nh);
         }
 
-        /**
-         * Creates or resets fields of a node. Called only from transfer
-         * where the node to push on stack is lazily created and
-         * reused when possible to help reduce intervals between reads
-         * and CASes of head and to avoid surges of garbage when CASes
-         * to push nodes fail due to contention.
-         */
         static SNode snode(SNode s, Object e, SNode next, int mode) {
             if (s == null) s = new SNode(e);
             s.mode = mode;
@@ -132,26 +125,7 @@ public class SynchronousQueue<E> extends AbstractQueue<E>
          * Puts or takes an item.
          */
         Object transfer(Object e, boolean timed, long nanos) {
-            /*
-             * Basic algorithm is to loop trying one of three actions:
-             *
-             * 1. If apparently empty or already containing nodes of same
-             *    mode, try to push node on stack and wait for a match,
-             *    returning it, or null if cancelled.
-             *
-             * 2. If apparently containing node of complementary mode,
-             *    try to push a fulfilling node on to stack, match
-             *    with corresponding waiting node, pop both from
-             *    stack, and return matched item. The matching or
-             *    unlinking might not actually be necessary because of
-             *    other threads performing action 3:
-             *
-             * 3. If top of stack already holds another fulfilling node,
-             *    help it out by doing its match and/or pop
-             *    operations, and then continue. The code for helping
-             *    is essentially the same as for fulfilling, except
-             *    that it doesn't return the item.
-             */
+           
 
             SNode s = null; // constructed/reused as needed
             int mode = (e == null) ? REQUEST : DATA;
@@ -765,147 +739,59 @@ public class SynchronousQueue<E> extends AbstractQueue<E>
         return (E)transferer.transfer(null, true, 0);
     }
 
-    /**
-     * Always returns <tt>true</tt>.
-     * A <tt>SynchronousQueue</tt> has no internal capacity.
-     *
-     * @return <tt>true</tt>
-     */
     public boolean isEmpty() {
         return true;
     }
 
-    /**
-     * Always returns zero.
-     * A <tt>SynchronousQueue</tt> has no internal capacity.
-     *
-     * @return zero.
-     */
     public int size() {
         return 0;
     }
 
-    /**
-     * Always returns zero.
-     * A <tt>SynchronousQueue</tt> has no internal capacity.
-     *
-     * @return zero.
-     */
     public int remainingCapacity() {
         return 0;
     }
 
-    /**
-     * Does nothing.
-     * A <tt>SynchronousQueue</tt> has no internal capacity.
-     */
     public void clear() {
     }
 
-    /**
-     * Always returns <tt>false</tt>.
-     * A <tt>SynchronousQueue</tt> has no internal capacity.
-     *
-     * @param o the element
-     * @return <tt>false</tt>
-     */
     public boolean contains(Object o) {
         return false;
     }
 
-    /**
-     * Always returns <tt>false</tt>.
-     * A <tt>SynchronousQueue</tt> has no internal capacity.
-     *
-     * @param o the element to remove
-     * @return <tt>false</tt>
-     */
     public boolean remove(Object o) {
         return false;
     }
 
-    /**
-     * Returns <tt>false</tt> unless the given collection is empty.
-     * A <tt>SynchronousQueue</tt> has no internal capacity.
-     *
-     * @param c the collection
-     * @return <tt>false</tt> unless given collection is empty
-     */
     public boolean containsAll(Collection<?> c) {
         return c.isEmpty();
     }
 
-    /**
-     * Always returns <tt>false</tt>.
-     * A <tt>SynchronousQueue</tt> has no internal capacity.
-     *
-     * @param c the collection
-     * @return <tt>false</tt>
-     */
     public boolean removeAll(Collection<?> c) {
         return false;
     }
 
-    /**
-     * Always returns <tt>false</tt>.
-     * A <tt>SynchronousQueue</tt> has no internal capacity.
-     *
-     * @param c the collection
-     * @return <tt>false</tt>
-     */
     public boolean retainAll(Collection<?> c) {
         return false;
     }
 
-    /**
-     * Always returns <tt>null</tt>.
-     * A <tt>SynchronousQueue</tt> does not return elements
-     * unless actively waited on.
-     *
-     * @return <tt>null</tt>
-     */
     public E peek() {
         return null;
     }
 
-    /**
-     * Returns an empty iterator in which <tt>hasNext</tt> always returns
-     * <tt>false</tt>.
-     *
-     * @return an empty iterator
-     */
     public Iterator<E> iterator() {
         return Collections.emptyIterator();
     }
 
-    /**
-     * Returns a zero-length array.
-     * @return a zero-length array
-     */
     public Object[] toArray() {
         return new Object[0];
     }
 
-    /**
-     * Sets the zeroeth element of the specified array to <tt>null</tt>
-     * (if the array has non-zero length) and returns it.
-     *
-     * @param a the array
-     * @return the specified array
-     * @throws NullPointerException if the specified array is null
-     */
     public <T> T[] toArray(T[] a) {
         if (a.length > 0)
             a[0] = null;
         return a;
     }
 
-    /**
-     * @throws UnsupportedOperationException {@inheritDoc}
-     * @throws ClassCastException            {@inheritDoc}
-     * @throws NullPointerException          {@inheritDoc}
-     * @throws IllegalArgumentException      {@inheritDoc}
-     */
     public int drainTo(Collection<? super E> c) {
         if (c == null)
             throw new NullPointerException();
@@ -920,12 +806,6 @@ public class SynchronousQueue<E> extends AbstractQueue<E>
         return n;
     }
 
-    /**
-     * @throws UnsupportedOperationException {@inheritDoc}
-     * @throws ClassCastException            {@inheritDoc}
-     * @throws NullPointerException          {@inheritDoc}
-     * @throws IllegalArgumentException      {@inheritDoc}
-     */
     public int drainTo(Collection<? super E> c, int maxElements) {
         if (c == null)
             throw new NullPointerException();
@@ -940,14 +820,6 @@ public class SynchronousQueue<E> extends AbstractQueue<E>
         return n;
     }
 
-    /*
-     * To cope with serialization strategy in the 1.5 version of
-     * SynchronousQueue, we declare some unused classes and fields
-     * that exist solely to enable serializability across versions.
-     * These fields are never used, so are initialized only if this
-     * object is ever serialized or deserialized.
-     */
-
     static class WaitQueue implements java.io.Serializable { }
     static class LifoWaitQueue extends WaitQueue {
         private static final long serialVersionUID = -3633113410248163686L;
@@ -959,11 +831,7 @@ public class SynchronousQueue<E> extends AbstractQueue<E>
     private WaitQueue waitingProducers;
     private WaitQueue waitingConsumers;
 
-    /**
-     * Save the state to a stream (that is, serialize it).
-     *
-     * @param s the stream
-     */
+   
     private void writeObject(java.io.ObjectOutputStream s)
         throws java.io.IOException {
         boolean fair = transferer instanceof TransferQueue;
