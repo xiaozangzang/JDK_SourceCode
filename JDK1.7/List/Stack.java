@@ -23,8 +23,8 @@ class Stack<E> extends Vector<E> {
     }
 
     public synchronized E peek() {
-        int     len = size();
 
+        int     len = size();
         if (len == 0)
             throw new EmptyStackException();
         return elementAt(len - 1);
