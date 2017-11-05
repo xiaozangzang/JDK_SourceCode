@@ -36,7 +36,7 @@ public class ArrayList<E> extends AbstractList<E>
             elementData = Arrays.copyOf(elementData, size);
 	}
     }
-	//数组扩容为原来的1.5倍
+	//数据扩容为原来的1.5倍
     public void ensureCapacity(int minCapacity) {
 	modCount++;
 	int oldCapacity = elementData.length;
