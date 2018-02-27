@@ -3,15 +3,15 @@ package java.util;
 public class Vector<E>extends AbstractList<E>
     implements List<E>, RandomAccess, Cloneable, java.io.Serializable
 {
-	//ObjectÊı×é
+	//Objectæ•°ç»„
     protected Object[] elementData;
-	//Êı×éÔªËØµÄ¸öÊı
+	//æ•°ç»„å…ƒç´ çš„ä¸ªæ•°
     protected int elementCount;
-	//ÈİÁ¿Ôö³¤
+	//å®¹é‡å¢é•¿
     protected int capacityIncrement;
-	//ĞòÁĞ»¯
+	//åºåˆ—åŒ–
     private static final long serialVersionUID = -2767605614048989439L;
-	//¹¹Ôì·½·¨
+	//æ„é€ æ–¹æ³•
     public Vector(int initialCapacity, int capacityIncrement) {
 	super();
         if (initialCapacity < 0)
@@ -21,16 +21,16 @@ public class Vector<E>extends AbstractList<E>
 	this.capacityIncrement = capacityIncrement;
     }
 
-	//³õÊ¼»¯Êı×éÈİÁ¿
+	//åˆå§‹åŒ–æ•°ç»„å®¹é‡
     public Vector(int initialCapacity) {
 	this(initialCapacity, 0);
     }
 
-	//Ä¬ÈÏÊı×éÈİÁ¿Îª10
+	//é»˜è®¤æ•°ç»„å®¹é‡ä¸º10
     public Vector() {
 	this(10);
     }
-	//¹¹Ôì²ÎÊıÎªCollection¼¯ºÏ£¬ÔªËØµÄË³Ğò°´µü´úÆ÷·µ»ØÔªËØµÄË³ĞòÅÅÁĞ
+	//æ„é€ å‚æ•°ä¸ºCollectioné›†åˆï¼Œå…ƒç´ çš„é¡ºåºæŒ‰è¿­ä»£å™¨è¿”å›å…ƒç´ çš„é¡ºåºæ’åˆ—
     public Vector(Collection<? extends E> c) {
 	elementData = c.toArray();
 	elementCount = elementData.length;
@@ -38,11 +38,11 @@ public class Vector<E>extends AbstractList<E>
 	if (elementData.getClass() != Object[].class)
 	    elementData = Arrays.copyOf(elementData, elementCount, Object[].class);
     }
-	//¸´ÖÆµ½Ö¸¶¨Êı×éÖĞ
+	//å¤åˆ¶åˆ°æŒ‡å®šæ•°ç»„ä¸­
     public synchronized void copyInto(Object[] anArray) {
 	System.arraycopy(elementData, 0, anArray, 0, elementCount);
     }
-	//¶Ô´ËÏòÁ¿µÄÈİÁ¿½øĞĞÎ¢µ÷£¬Ê¹ÆäµÈÓÚÏòÁ¿µÄµ±Ç°´óĞ¡¡£
+	//å¯¹æ­¤å‘é‡çš„å®¹é‡è¿›è¡Œå¾®è°ƒï¼Œä½¿å…¶ç­‰äºå‘é‡çš„å½“å‰å¤§å°ã€‚
     public synchronized void trimToSize() {
 	modCount++;
 	int oldCapacity = elementData.length;
@@ -50,8 +50,8 @@ public class Vector<E>extends AbstractList<E>
             elementData = Arrays.copyOf(elementData, elementCount);
 	}
     }
-	//modCount±íÊ¾´ËÁĞ±íĞŞ¸ÄµÄ´ÎÊı£¬¼Ì³Ğ×ÔAbstractListµÄÊôĞÔ
-	//Ôö¼ÓÈİÁ¿
+	//modCountè¡¨ç¤ºæ­¤åˆ—è¡¨ä¿®æ”¹çš„æ¬¡æ•°ï¼Œç»§æ‰¿è‡ªAbstractListçš„å±æ€§
+	//å¢åŠ å®¹é‡
     public synchronized void ensureCapacity(int minCapacity) {
 	modCount++;
 	ensureCapacityHelper(minCapacity);
@@ -71,7 +71,7 @@ public class Vector<E>extends AbstractList<E>
 	}
     }
 
-	//ÉèÖÃĞÂµÄÈİÁ¿
+	//è®¾ç½®æ–°çš„å®¹é‡
     public synchronized void setSize(int newSize) {
 	modCount++;
 	if (newSize > elementCount) {
@@ -83,19 +83,19 @@ public class Vector<E>extends AbstractList<E>
 	}
 	elementCount = newSize;
     }
-	//·µ»ØÊı×éÈİÁ¿´óĞ¡
+	//è¿”å›æ•°ç»„å®¹é‡å¤§å°
     public synchronized int capacity() {
 	return elementData.length;
     }
-	//·µ»ØÊı×éÔªËØÊıÁ¿
+	//è¿”å›æ•°ç»„å…ƒç´ æ•°é‡
     public synchronized int size() {
 	return elementCount;
     }
-	//ÅĞ¿Õ
+	//åˆ¤ç©º
     public synchronized boolean isEmpty() {
 	return elementCount == 0;
     }
-	//·µ»ØÃ¶¾Ù
+	//è¿”å›æšä¸¾
     public Enumeration<E> elements() {
 	return new Enumeration<E>() {
 	    int count = 0;
@@ -261,7 +261,7 @@ public class Vector<E>extends AbstractList<E>
 	    throw new InternalError();
 	}
     }
-	//·µ»ØÒ»¸öÊı×é
+	//è¿”å›ä¸€ä¸ªæ•°ç»„
     public synchronized Object[] toArray() {
         return Arrays.copyOf(elementData, elementCount);
     }
