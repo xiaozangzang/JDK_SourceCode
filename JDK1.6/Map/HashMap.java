@@ -71,7 +71,7 @@ public class HashMap<K,V>
         h ^= (h >>> 20) ^ (h >>> 12);
         return h ^ (h >>> 7) ^ (h >>> 4);
     }
-
+    // 内部静态方法，传入
     static int indexFor(int h, int length) {
         return h & (length-1);
     }
@@ -79,11 +79,11 @@ public class HashMap<K,V>
     public int size() {
         return size;
     }
-
+    //判空
     public boolean isEmpty() {
         return size == 0;
     }
-
+    //根据键取出值
     public V get(Object key) {
         if (key == null)
             return getForNullKey();
@@ -109,7 +109,7 @@ public class HashMap<K,V>
     public boolean containsKey(Object key) {
         return getEntry(key) != null;
     }
-
+// 获取键对应的键值对实体
     final Entry<K,V> getEntry(Object key) {
         int hash = (key == null) ? 0 : hash(key.hashCode());
         for (Entry<K,V> e = table[indexFor(hash, table.length)];
@@ -123,7 +123,7 @@ public class HashMap<K,V>
         return null;
     }
 
-
+// 添加键值
     public V put(K key, V value) {
         if (key == null)
             return putForNullKey(value);
@@ -143,7 +143,7 @@ public class HashMap<K,V>
         addEntry(hash, key, value, i);
         return null;
     }
-
+// 添加键为null的值
     private V putForNullKey(V value) {
         for (Entry<K,V> e = table[0]; e != null; e = e.next) {
             if (e.key == null) {
@@ -194,7 +194,7 @@ public class HashMap<K,V>
         table = newTable;
         threshold = (int)(newCapacity * loadFactor);
     }
-
+// 转移
     void transfer(Entry[] newTable) {
         Entry[] src = table;
         int newCapacity = newTable.length;
@@ -204,6 +204,7 @@ public class HashMap<K,V>
                 src[j] = null;
                 do {
                     Entry<K,V> next = e.next;
+                    // 重新计算新Entry数组中的下标
                     int i = indexFor(e.hash, newCapacity);
                     e.next = newTable[i];
                     newTable[i] = e;
@@ -384,7 +385,7 @@ public class HashMap<K,V>
             }
             return false;
         }
-
+                       
         public final int hashCode() {
             return (key==null   ? 0 : key.hashCode()) ^
                    (value==null ? 0 : value.hashCode());
