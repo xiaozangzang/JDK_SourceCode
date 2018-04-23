@@ -180,7 +180,7 @@ public class HashMap<K,V>
             putForCreate(e.getKey(), e.getValue());
         }
     }
-	//扩容2倍
+	//扩容固定大小
     void resize(int newCapacity) {
         Entry[] oldTable = table;
         int oldCapacity = oldTable.length;
